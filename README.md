@@ -311,28 +311,46 @@ ssh -i "your-key.pem" ubuntu@<EC2-PUBLIC-IP>
 
 ---
 
-### Step 3 — Install Docker on EC2
+### Step 3 — Install Git and Docker on EC2
+
+Install both tools manually **or** use the one-shot script below.
+
+**Manual install:**
 
 ```bash
-# Update packages
-sudo apt-get update -y
+# Update & upgrade packages
+sudo apt update -y
+sudo apt upgrade -y
+
+# Install Git
+sudo apt install git -y
 
 # Install Docker
-sudo apt-get install -y docker.io
+sudo apt install docker.io -y
 
-# Start Docker service
+# Start and enable Docker service
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# Allow running docker without sudo
-sudo usermod -aG docker ubuntu
+# Allow running Docker without sudo
+sudo usermod -aG docker $USER
 
-# Apply group change (or log out and back in)
+# Apply group change for the current session
 newgrp docker
 
-# Verify Docker is working
+# Verify both tools
+git --version
 docker --version
 ```
+
+**Or — run the one-shot setup script (faster):**
+
+```bash
+# Download and run the bootstrap script
+curl -fsSL https://raw.githubusercontent.com/Deepak8260/Two-tier-flask-mySQL-app/main/setup.sh | bash
+```
+
+> The `setup.sh` script does all of the above automatically in one command.
 
 ---
 
@@ -474,7 +492,6 @@ docker logs mysql-container
 - [ ] CI/CD pipeline with GitHub Actions or Jenkins
 - [ ] Kubernetes manifests + Helm chart
 - [ ] HTTPS with Nginx reverse proxy
-
 ---
 
 ## License
