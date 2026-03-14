@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="FlaskBoard — a Python Flask and MySQL message board." />
+  <title>FlaskBoard — Message Board</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── Topbar ────────────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none">
+        <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M3 5v4c0 1.657 4.03 3 9 3s9-1.343 9-3V5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M3 9v5c0 1.657 4.03 3 9 3s9-1.343 9-3V9" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M3 14v5c0 1.657 4.03 3 9 3s9-1.343 9-3v-5" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span class="brand-name">FlaskBoard</span>
+    </div>
+    <nav class="topbar-nav">
+      <span class="nav-item active">Board</span>
+    </nav>
+    <div class="topbar-right">
+      <span class="status-chip">
+        <span class="status-dot"></span>Connected
+      </span>
+    </div>
+  </header>
+
+  <!-- ── Page wrapper ──────────────────────────────────────────── -->
+  <div class="page-wrapper">
+
+    <!-- Page title row -->
+    <div class="page-titlebar">
+      <div>
+        <h1 class="page-title">Message Board</h1>
+        <p class="page-desc">Store and review messages powered by Python Flask &amp; MySQL</p>
+      </div>
+      <div class="db-tag">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 8v4l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        messagesdb · localhost
+      </div>
+    </div>
+
+    <!-- ── Single unified board ───────────────────────────────── -->
+    <div class="board">
+
+      <!-- COMPOSE SECTION -->
+      <div class="board-compose">
+        <form id="compose-form" action="/add" method="POST" autocomplete="off">
+          <div class="compose-row">
+            <input
+              id="msg-input"
+              name="message"
+              type="text"
+              class="compose-input"
+              placeholder="Write a message and press Post…"
+              maxlength="500"
+              required
+              autofocus
+            />
+            <button type="submit" class="btn-post">Post Message</button>
+          </div>
+          <div class="compose-meta">
+            <span class="char-counter" id="char-counter">0 / 500 characters</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- FEED HEADER -->
+      <div class="feed-header">
+        <div class="feed-header-left">
+          <span class="feed-title">Messages</span>
+          <span class="feed-count">{{ messages | length }}</span>
+        </div>
+        <div class="feed-header-right">
+          <input
+            id="search-input"
+            type="search"
+            class="search-input"
+            placeholder="Search…"
+            aria-label="Search messages"
+          />
+        </div>
+      </div>
+
+      <!-- COLUMN LABELS -->
+      {% if messages %}
+      <div class="col-labels">
+        <span class="cl cl-id">ID</span>
+        <span class="cl cl-msg">Message</span>
+        <span class="cl cl-chars">Length</span>
+        <span class="cl cl-ip">Source IP</span>
+        <span class="cl cl-time">Posted At</span>
+        <span class="cl cl-del"></span>
+      </div>
+      {% endif %}
+
+      <!-- ROWS -->
+      <div id="feed-list">
+
+        {% for msg in messages %}
+        <div class="msg-row" data-search="{{ msg.message | lower }}">
+          <span class="mc mc-id">#{{ msg.id }}</span>
+          <span class="mc mc-msg" title="{{ msg.message }}">{{ msg.message }}</span>
+          <span class="mc mc-chars">{{ msg.char_count }}</span>
+          <span class="mc mc-ip">{{ msg.ip_address }}</span>
+          <span class="mc mc-time">
+            <span class="t-rel">{{ msg.time_ago }}</span>
+            <span class="t-abs">{{ msg.created_str }}</span>
+          </span>
+          <span class="mc mc-del">
+            <form action="/delete/{{ msg.id }}" method="POST">
+              <button
+                type="submit"
+                class="del-btn"
+                onclick="return confirm('Delete message #{{ msg.id }}?')"
+                aria-label="Delete"
+              >&#x2715;</button>
+            </form>
+          </span>
+        </div>
+        {% endfor %}
+
+        <!-- No search results -->
+        <div class="no-results" id="no-results" style="display:none">
+          No messages match your search.
+        </div>
+
+      </div>
+
+      <!-- Empty state -->
+      {% if not messages %}
+      <div class="empty-board">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" opacity="0.3">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <p>No messages yet. Post the first one above.</p>
+      </div>
+      {% endif %}
+
+    </div><!-- /.board -->
+  </div><!-- /.page-wrapper -->
+
+  <!-- ── Footer ────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    FlaskBoard &nbsp;·&nbsp; Python Flask + MySQL &nbsp;·&nbsp; Two-Tier Architecture
+  </footer>
+
+  <script>
+    // Character counter
+    const input   = document.getElementById('msg-input');
+    const counter = document.getElementById('char-counter');
+    input.addEventListener('input', () => {
+      const n = input.value.length;
+      counter.textContent = `${n} / 500 characters`;
+      counter.className = 'char-counter' +
+        (n > 400 ? ' warn' : '') +
+        (n === 500 ? ' limit' : '');
+    });
+
+    // Live search
+    const searchEl  = document.getElementById('search-input');
+    const feedEl    = document.getElementById('feed-list');
+    const noResults = document.getElementById('no-results');
+
+    searchEl && searchEl.addEventListener('input', () => {
+      const q   = searchEl.value.toLowerCase();
+      const rows = feedEl.querySelectorAll('.msg-row');
+      let vis = 0;
+      rows.forEach(r => {
+        const show = (r.dataset.search || '').includes(q);
+        r.style.display = show ? '' : 'none';
+        if (show) vis++;
+      });
+      if (noResults) noResults.style.display = (!vis && q) ? 'flex' : 'none';
+    });
+  </script>
+
+</body>
+</html>

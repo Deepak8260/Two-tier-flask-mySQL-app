@@ -1,0 +1,61 @@
+# ── Python ─────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ── Virtual environments ────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+.env/
+
+# ── Environment / secrets ───────────────────────────────────
+# .env holds real credentials — NEVER commit this
+.env
+
+# ── Distribution / packaging ────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+
+# ── Pytest / coverage ───────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ── Editor / IDE ────────────────────────────────────────────
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+
+# ── OS generated ────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Logs ────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Flask instance folder (session keys, local overrides) ───
+instance/
+
+# ── mypy ────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
