@@ -148,7 +148,7 @@ Visit **http://localhost:5000**
 
 ---
 
-# 🐳 Option 2 — Run with Docker (Recommended)
+# 🐳 Option 2 — Run with Docker
 
 Use this method to run both Flask and MySQL inside Docker containers on any machine.
 
@@ -279,7 +279,7 @@ docker network rm flask-mysql-net
 
 ---
 
-# ☁️ Option 3 — Deploy on AWS EC2
+# ☁️ Option 3 — Deploy on AWS EC2 (Recommended)
 
 Deploy the full stack on an AWS EC2 instance using Docker.
 
